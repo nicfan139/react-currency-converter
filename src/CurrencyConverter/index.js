@@ -2,21 +2,45 @@ import React from 'react';
 import './styles/index.scss';
 import propTypes from 'prop-types';
 import Fade from 'react-reveal/Fade';
+import { currencies } from './CurrenciesRef';
 import CurrencyDropdown from './CurrencyDropdown';
 
 class CurrencyConverter extends React.Component {
-  constructor(props) {
-    super(props);
-    const currencies = this.props.currencies;
-    this.state = {
-      currenciesList: currencies,
-      currencyA: currencies[0],
-      currencyB: currencies[1],
-      currencyAval: parseFloat( 100 * (currencies[1].sellRate).toFixed(currencies[0].decimalPlaces)),
-      currencyBval: 100,
-      selectedOptionA: currencies[0].ticker,
-      selectedOptionB: currencies[1].ticker,
-    }
+  state = {
+    currenciesList: "",
+    currencyA: "",
+    currencyB: "",
+    currencyAval: "",
+    currencyBval: "",
+    selectedOptionA: "",
+    selectedOptionB: "",
+  }
+
+  componentDidMount() {
+    // Fetch rates from exchangeratesapi.io
+    fetch(`https://api.exchangeratesapi.io/latest?base=${this.props.base}`)
+    .then(res => res.json())
+    .catch(err => {
+      console.log(err);
+      alert("Unable to fetch rates from exchangeratesapi.io :(");
+    })
+    .then(data => {
+      const rates = data.rates;
+
+      currencies.forEach(c => {
+        c.rate = rates[c.ticker];
+      })
+
+      this.setState({
+        currenciesList: currencies,
+        currencyA: currencies[0],
+        currencyB: currencies[1],
+        currencyAval: "",
+        currencyBval: "",
+        selectedOptionA: currencies[0].ticker,
+        selectedOptionB: currencies[1].ticker,
+      }, () => document.getElementById("currency-widget-input-a").focus())
+    })
   }
 
   showCurrencyDropdown = (input) => {
@@ -45,7 +69,7 @@ class CurrencyConverter extends React.Component {
         currencyA: selectedCurrency,
         currencyB: currencyA,
         currencyAval: currencyBval,
-        currencyBval: parseFloat((currencyBval / currencyA.sellRate).toFixed(currencyA.decimalPlaces)),
+        currencyBval: parseFloat((currencyBval * currencyA.rate).toFixed(currencyA.decimalPlaces)),
         selectedOptionA: selectedCurrency.ticker,
         selectedOptionB: currencyA.ticker,
       })
@@ -55,7 +79,7 @@ class CurrencyConverter extends React.Component {
       this.setState({
         currencyA: selectedCurrency,
         currencyB: currenciesList[0],
-        currencyBval: parseFloat((currencyAval * selectedCurrency.buyRate).toFixed(currenciesList[0].decimalPlaces)),
+        currencyBval: parseFloat((currencyAval / selectedCurrency.rate).toFixed(currenciesList[0].decimalPlaces)),
         selectedOptionA: selectedCurrency.ticker,
         selectedOptionB: currenciesList[0].ticker
       })
@@ -63,7 +87,7 @@ class CurrencyConverter extends React.Component {
       // Condition for when Selected currency for Input A IS NOT 'CAD'
       this.setState({
         currencyA: selectedCurrency,
-        currencyBval: parseFloat((currencyAval * selectedCurrency.buyRate).toFixed(currencyB.decimalPlaces)),
+        currencyBval: parseFloat((currencyAval / selectedCurrency.rate).toFixed(currencyB.decimalPlaces)),
         selectedOptionA: selectedCurrency.ticker,
       });
     }
@@ -82,7 +106,7 @@ class CurrencyConverter extends React.Component {
         currencyA: currencyB,
         currencyB: selectedCurrency,
         currencyAval: currencyBval,
-        currencyBval: parseFloat((currencyBval * currencyB.buyRate).toFixed(selectedCurrency.decimalPlaces)),
+        currencyBval: parseFloat((currencyBval / currencyB.rate).toFixed(selectedCurrency.decimalPlaces)),
         selectedOptionA: currencyB.ticker,
         selectedOptionB: selectedCurrency.ticker
       })
@@ -92,7 +116,7 @@ class CurrencyConverter extends React.Component {
       this.setState({
         currencyA: currenciesList[0],
         currencyB: selectedCurrency,
-        currencyBval: parseFloat((currencyAval * ( 1 / selectedCurrency.sellRate)).toFixed(selectedCurrency.decimalPlaces)),
+        currencyBval: parseFloat((currencyAval * selectedCurrency.rate).toFixed(selectedCurrency.decimalPlaces)),
         selectedOptionA: currenciesList[0].ticker,
         selectedOptionB: selectedCurrency.ticker
       })
@@ -100,7 +124,7 @@ class CurrencyConverter extends React.Component {
       // Condition for when Selected currency for Input B IS NOT 'CAD'
       this.setState({
         currencyB: selectedCurrency,
-        currencyBval: parseFloat((currencyAval * ( 1 / selectedCurrency.sellRate )).toFixed(selectedCurrency.decimalPlaces)),
+        currencyBval: parseFloat((currencyAval * selectedCurrency.rate).toFixed(selectedCurrency.decimalPlaces)),
         selectedOptionB: selectedCurrency.ticker
       });
     }
@@ -113,31 +137,17 @@ class CurrencyConverter extends React.Component {
     if (input === "A") {
       // For every digit change in Input A, change the value of Input B
       const newValueA = e.target.value;
-      if (currencyA.ticker === "CAD") {
-        this.setState({
-          currencyAval: newValueA,
-          currencyBval: parseFloat((newValueA * ( 1 / currencyB.sellRate )).toFixed(currencyB.decimalPlaces))
-        })
-      } else {
-        this.setState({
-          currencyAval: newValueA,
-          currencyBval: parseFloat((newValueA * currencyA.buyRate).toFixed(currencyB.decimalPlaces))
-        })
-      }
+      this.setState({
+        currencyAval: newValueA,
+        currencyBval: currencyA.ticker === "CAD" ? parseFloat((newValueA * currencyB.rate ).toFixed(currencyB.decimalPlaces)) : parseFloat((newValueA / currencyA.rate).toFixed(currencyB.decimalPlaces))
+      })
     } else if (input === "B") {
       // For every digit change in Input B, change the value in Input A
       const newValueB = e.target.value;
-      if ( currencyB.ticker === "CAD" ) {
-        this.setState({
-          currencyAval: parseFloat((newValueB * ( 1 / currencyA.buyRate)).toFixed(currencyA.decimalPlaces)),
-          currencyBval: newValueB
-        })
-      } else {
-         this.setState({
-          currencyAval: parseFloat((newValueB * currencyB.sellRate).toFixed(currencyA.decimalPlaces)),
-          currencyBval: newValueB
-        })
-      }
+      this.setState({
+        currencyAval: currencyB.ticker === "CAD" ? parseFloat((newValueB * currencyA.rate).toFixed(currencyA.decimalPlaces)) : parseFloat((newValueB / currencyB.rate).toFixed(currencyA.decimalPlaces)),
+        currencyBval: newValueB
+      })
     }
   }
 
@@ -149,7 +159,7 @@ class CurrencyConverter extends React.Component {
         currencyA: currencyB,
         currencyB: currencyA,
         currencyAval: currencyBval,
-        currencyBval: currencyBval * currencyB.buyRate,
+        currencyBval: parseFloat((currencyBval / currencyB.rate).toFixed(currencyB.decimalPlaces)),
         selectedOptionA: currencyB.ticker,
         selectedOptionB: currencyA.ticker
       });
@@ -160,7 +170,7 @@ class CurrencyConverter extends React.Component {
         currencyA: currencyB,
         currencyB: currencyA,
         currencyAval: currencyBval,
-        currencyBval: parseFloat((currencyBval / currencyA.sellRate).toFixed(currencyA.decimalPlaces)),
+        currencyBval: parseFloat((currencyBval * currencyA.rate).toFixed(currencyA.decimalPlaces)),
         selectedOptionA: currencyB.ticker,
         selectedOptionB: currencyA.ticker
       })
@@ -178,7 +188,11 @@ class CurrencyConverter extends React.Component {
       showCurrencyDropdownA,
       showCurrencyDropdownB
     } = this.state;
-    const { dpPrecision } = this.props;
+    const { ratePrecision } = this.props;
+
+    // Show loading animation while data gets fetched from the API
+    if (!currenciesList) { return <div className="lds-grid"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div> }
+
     return (
       <Fade>
         <div className="widgetContainer">
@@ -188,7 +202,7 @@ class CurrencyConverter extends React.Component {
               { /* Input A Label */}
               <label className="currencyInputLabel">
                 <i className="fas fa-minus" />&nbsp;&nbsp;
-                DEPOSIT
+                FOR:
               </label>
               <div className="currencyInputRow">
                 { /* Input A Select Dropdown Link */}
@@ -245,7 +259,7 @@ class CurrencyConverter extends React.Component {
               { /* Input B Label */ }
               <label className="currencyInputLabel">
                 <i className="fas fa-plus" />&nbsp;&nbsp;
-                WITHDRAW
+                I'LL GET:
               </label>
               <div className="currencyInputRow">
                 { /* Input B Select Dropdown Link */}
@@ -301,10 +315,10 @@ class CurrencyConverter extends React.Component {
                 ≈
                 &nbsp;
                 { /* Show sell rate on the right-side if user DEPOSITS 'CAD' */
-                  currencyA.ticker === 'CAD' && parseFloat(currencyB.sellRate).toFixed(dpPrecision)
+                  currencyA.ticker === 'CAD' && parseFloat(1 / currencyB.rate).toFixed(ratePrecision)
                 }
                 { /* Show buy rate on the right-side if user WITHDRAWS 'CAD' */
-                  currencyA.ticker !== 'CAD' && parseFloat(currencyA.buyRate).toFixed(dpPrecision)
+                  currencyA.ticker !== 'CAD' && parseFloat(1 / currencyA.rate).toFixed(ratePrecision)
                 }
                 &nbsp;
                 { currencyA.ticker === 'CAD' && currencyA.ticker }
@@ -319,7 +333,8 @@ class CurrencyConverter extends React.Component {
 }
 
 CurrencyConverter.propTypes = {
-  currencies: propTypes.array.isRequired
+  base: propTypes.string.isRequired,
+  ratePrecision: propTypes.number.isRequired
 }
 
 export default CurrencyConverter;
