@@ -1,0 +1,179 @@
+.widgetContainer {
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  padding: 15px 0px;
+  .converterTool {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .rateDisplay {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px 0px;
+    font-size: 20px;
+    .rateDisplayRow {
+      display: flex;
+      align-items: center;
+      margin: 0px;
+      .rateLabel {
+        margin: 0px 5px;
+      }
+      .rateText {
+        text-align: left;
+        text-decoration: none;
+        margin: 0px;
+        border-radius: 5px;
+      }
+    }
+  }
+}
+// Tablet view
+@media screen and (max-width: 960px) {
+  .widgetContainer {
+    .converterTool {
+      flex-direction: column;
+    }
+  }
+}
+// Mobile view
+@media screen and (max-width: 600px) {
+  .widgetContainer {
+    .rateDisplay {
+      font-size: 16px;
+    }
+  }
+}
+
+.currencyInputContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.currencyInputLabel {
+  margin: 0px 0px 10px 0px;
+  color: orange;
+  font-size: 28px;
+  font-weight: bold;
+}
+// Mobile view
+@media screen and (max-width: 600px) {
+  .currencyInputLabel {
+    margin: 0px 0px 10px 0px;
+    color: orange;
+    font-size: 20px;
+    font-weight: bold;
+  }
+}
+
+.currencyInputRow {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+  box-shadow: 0px 2px 3px 1px rgba(0,0,0,0.5);
+  .currencyDropdownLink {
+    display: flex;
+    &:hover {
+      cursor: pointer;
+    }
+    .currencyIcon {
+      height: 70px;
+      width: 70px;
+      margin: 0px;
+      background-color: white;
+      border-radius: 5px 0px 0px 5px;
+      transition: all 0.3s;
+    }
+    .dropdownIcon {
+      width: 90px;
+      padding: 17px 6px 17px 8px;
+      color: whitesmoke;
+      background-color: #143642;
+      font-size: 24px;
+      font-weight: bold;
+      border: 2px solid #143642;
+    }
+  }
+  .currencyInput {
+    width: 200px;
+    padding: 17px 10px;
+    outline: none;
+    border: 4px solid white;
+    border-radius: 0px 5px 5px 0px;
+    background-color: white;
+    font-size: 24px;
+    transition: all 0.2s;
+    &:focus {
+      outline: none;
+      border: 4px solid orange;
+    }
+  }
+}
+// Tablet view
+@media screen and (max-width: 960px) {
+  .currencyInputRow {  
+    .currencyInput {
+      width: 200px;
+    }
+  }
+}
+// Mobile view
+@media screen and (max-width: 600px) {
+  .currencyInputRow {
+    .currencyDropdownLink {
+      .currencyIcon {
+        height: 50px;
+        width: 50px;
+      }
+      .dropdownIcon {
+        height: 50px;
+        width: 70px;
+        padding: 10px 5px;
+        font-size: 18px;
+      }
+    }
+    .currencyInput {
+      height: 50px;
+      width: 150px;
+      font-size: 16px;
+    }
+  }
+}
+
+.swapBtnContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 15px 20px;
+  margin: 40px 30px 0px;
+  border-radius: 5px;
+  color: white;
+  background-color: rgba(0,0,0,0.4);
+  font-size: 40px;
+  transition: all 0.3s;
+  &:hover {
+    cursor: pointer;
+    background-color: rgba(0,0,0,0.7);
+  }
+}
+// Tablet view
+@media screen and (max-width: 960px) {
+  .swapBtnContainer {
+    transform: rotate(90deg);
+    margin: 20px 0px 10px;
+    padding: 15px;
+  }
+}
+// Mobile view
+@media screen and (max-width: 600px) {
+  .swapBtnContainer {
+    font-size: 24px;
+  }
+}

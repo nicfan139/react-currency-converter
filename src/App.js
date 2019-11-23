@@ -1,28 +1,17 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { currencies } from './currencies';
+import CurrencyConverter from './CurrencyConverter';
 
-class App extends Component {
-  render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
-    );
-  }
-}
+const App = () => (
+  <div style={{ textAlign: "center" }}>
+    <h1>Two-Way Currency Converter</h1>
+    <p>Built with <a href="https://reactjs.org" target="_blank" rel="noopener noreferrer">React</a> by Nicolas Fan (<a href="https://github.com/nicfan139" target="_blank" rel="noopener noreferrer">@nicfan139</a>)</p>
+    <p><em>Instant conversions on every input change and currency select.</em></p>
+    <CurrencyConverter
+      currencies={currencies}
+      dpPrecision={4}
+    />
+  </div>
+);
 
 export default App;

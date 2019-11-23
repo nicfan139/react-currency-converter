@@ -1,6 +1,6 @@
 {
   "name": "react-currency-converter",
-  "version": "1.19.2",
+  "version": "0.1.0",
   "private": true,
   "dependencies": {
     "node-sass": "^4.11.0",
