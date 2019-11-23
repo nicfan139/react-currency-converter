@@ -1,10 +1,12 @@
 {
   "name": "react-currency-converter",
-  "version": "0.1.0",
+  "version": "1.19.2",
   "private": true,
   "dependencies": {
+    "node-sass": "^4.11.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
+    "react-reveal": "^1.2.2",
     "react-scripts": "2.1.8"
   },
   "scripts": {
