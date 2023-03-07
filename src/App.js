@@ -8,7 +8,7 @@ const App = () => (
       Built with <a href="https://reactjs.org" target="_blank" rel="noopener noreferrer">React</a> by Nicolas Fan (<a href="https://github.com/nicfan139" target="_blank" rel="noopener noreferrer">@nicfan139</a>)
     </p>
     <p><em>Instant conversions on every input change and currency select.</em></p>
-    <p><em>Base currency set to "CAD". Rates extracted from <a href="https://exchangeratesapi.io/" target="_blank" rel="noopener noreferrer">exchangeratesapi.io</a>.</em></p>
+    <p><em>Base currency set to "CAD". Rates extracted from <a href="https://apilayer.com/marketplace/exchangerates_data-api" target="_blank" rel="noopener noreferrer">Exchange Rates Data API</a>.</em></p>
     <CurrencyConverter
       base="CAD"
       ratePrecision={4}

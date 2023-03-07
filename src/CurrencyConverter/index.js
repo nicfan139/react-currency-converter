@@ -2,7 +2,7 @@ import React from 'react';
 import './styles/index.scss';
 import propTypes from 'prop-types';
 import Fade from 'react-reveal/Fade';
-import { currencies } from './CurrenciesRef';
+import { currencies } from './CurrencyList';
 import CurrencyDropdown from './CurrencyDropdown';
 
 class CurrencyConverter extends React.Component {
@@ -18,7 +18,11 @@ class CurrencyConverter extends React.Component {
 
   componentDidMount() {
     // Fetch rates from exchangeratesapi.io
-    fetch(`https://api.exchangeratesapi.io/latest?base=${this.props.base}`)
+    fetch(`https://api.apilayer.com/exchangerates_data/latest?base=${this.props.base}`, {
+      headers: {
+        'apiKey': process.env.REACT_APP_API_KEY
+      }
+    })
     .then(res => res.json())
     .catch(err => {
       console.log(err);
